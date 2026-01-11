@@ -8,7 +8,19 @@ p {
   font-style: italic;
 }
 
-span{
+span {
   font-weight: 700;
   font-style: normal;
+}
+
+.textField {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 5px;
+  height: 30px;
+}
+
+input {
+  height: 20px;
 }

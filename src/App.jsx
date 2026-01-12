@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
 
 import Blog from './components/Blog'
+import Notification from './components/Notification'
+
 import blogService from './services/blog'
 import loginService from './services/login'
+
 import './index.css'
 
 function App() {
+  const [message, setMessage] = useState({
+    message: null,
+    type: null
+  })
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -42,7 +49,16 @@ function App() {
       setUsername('')
       setPassword('')
     } catch (error) {
-      console.error('Error', error.message);
+      setMessage({
+        message: 'Wrong username or password',
+        type: 'error'
+      })
+      setTimeout(() => {
+        setMessage({
+          message: null,
+          type: null
+        })
+      }, 5000)
     }
   }
 
@@ -61,18 +77,45 @@ function App() {
 
   const addBlog = async (e) => {
     e.preventDefault()
+
     const newBlog = {
       title: title,
       author: author,
       url: url
     }
 
-    const savedBlog = await blogService.create(newBlog)
-    setBlogs(blogs.concat(savedBlog))
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    try {
+      const savedBlog = await blogService.create(newBlog)
+      setBlogs(blogs.concat(savedBlog))
+
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+
+      setMessage({
+        message: `a new blog ${newBlog.title} by ${newBlog.author} was added`,
+        type: 'success'
+      })
+      setTimeout(() => {
+        setMessage({
+          message: null,
+          type: null
+        })
+      }, 5000)
+    } catch (error) {
+      setMessage({
+        message: `The blog ${newBlog.title} by ${newBlog.author} was not added`,
+        type: 'error'
+      })
+      setTimeout(() => {
+        setMessage({
+          message: null,
+          type: null
+        })
+      }, 5000)
+    }
   }
+
 
   const loginForm = () => (
     <>
@@ -141,6 +184,7 @@ function App() {
   return (
     <>
       <h1>Blog App</h1>
+      <Notification message={message.message} type={message.type} />
       {user === null ?
         loginForm() :
         <div>

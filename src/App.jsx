@@ -77,6 +77,7 @@ function App() {
   const addBlog = async (blogObject) => {
     try {
       const savedBlog = await blogService.create(blogObject)
+      console.log(savedBlog);
       setBlogs(blogs.concat(savedBlog))
       blogFormRef.current.toggleVisibility()
 
@@ -112,7 +113,7 @@ function App() {
         setBlogs(blogList)
 
         setMessage({
-        message: `blog ${blogObject.title} updated!`,
+        message: `You liked '${blogObject.title}' by ${blogObject.author}`,
         type: 'success'
       })
       setTimeout(() => {

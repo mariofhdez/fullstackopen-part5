@@ -4,7 +4,6 @@ const Blog = ({ blog, handleLike }) => {
     const [visible, setVisible] = useState(false)
 
     const showWhenVisible = { display: visible ? '' : 'none' }
-
     const toggleVisibility = () => {
         setVisible(!visible)
     }

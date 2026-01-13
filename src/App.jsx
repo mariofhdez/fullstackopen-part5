@@ -9,6 +9,7 @@ import loginService from './services/login'
 import './index.css'
 
 function App() {
+  const [visible, setVisible] = useState(false)
   const [message, setMessage] = useState({
     message: null,
     type: null
@@ -96,6 +97,7 @@ function App() {
         message: `a new blog ${newBlog.title} by ${newBlog.author} was added`,
         type: 'success'
       })
+      setVisible(false)
       setTimeout(() => {
         setMessage({
           message: null,
@@ -144,8 +146,19 @@ function App() {
     </>
   )
 
-  const blogForm = () => (
+  const blogForm = () => {
+    const hideWhenVisible = { display: visible ? 'none' : '' }
+    const showWhenVisible = { display: visible ? '' : 'none' }
+
+    const toggleVisibility = () => {
+      setVisible(!visible)
+    }
+    return (
     <>
+    <div style={hideWhenVisible}>
+      <button onClick={toggleVisibility}>Create new blog</button>
+    </div>
+    <div style={showWhenVisible}>
       <h2>Create a new blog</h2>
       <form onSubmit={addBlog}>
         <div className='textField'>
@@ -176,10 +189,11 @@ function App() {
           />
         </div>
         <button type="submit">Create</button>
-
       </form>
+      <button onClick={toggleVisibility}>cancel</button>
+    </div>
     </>
-  )
+  )}
 
   return (
     <>

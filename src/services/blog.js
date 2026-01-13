@@ -24,8 +24,19 @@ const create = async (newBlog) => {
   }
 };
 
+const update = async (blog) => {
+  const response = await axios.put(`${baseUrl}/${blog.id}`, blog)
+    if (response.status === 200) {
+    return response.data;
+  } else {
+    console.log(response.data);
+    return null;
+  }
+}
+
 export default {
   getAll,
   create,
+  update,
   setToken,
 };

@@ -104,6 +104,37 @@ function App() {
     }
   }
 
+  const likeBlog = async (blog) => {
+    try {
+        const blogObject = {...blog, likes: blog.likes + 1}
+        const updatedBlog = await blogService.update(blogObject)
+        const blogList = blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b)
+        setBlogs(blogList)
+
+        setMessage({
+        message: `blog ${blogObject.title} updated!`,
+        type: 'success'
+      })
+      setTimeout(() => {
+        setMessage({
+          message: null,
+          type: null
+        })
+      }, 5000)
+    } catch (error) {
+      setMessage({
+        message: `Like to the blog ${blog.title} is not registered`,
+        type: 'error'
+      })
+      setTimeout(() => {
+        setMessage({
+          message: null,
+          type: null
+        })
+      }, 5000)
+    }
+  }
+
   const loginForm = () => (
     <>
       <h2>Login</h2>
@@ -154,7 +185,7 @@ function App() {
           </div>
           {blogForm()}
           <h2>Blog list</h2>
-          {blogs.map(b => <Blog key={b.id} blog={b} />)}
+          {blogs.map(b => <Blog key={b.id} blog={b} handleLike={likeBlog} />)}
         </div>
       }
     </>

@@ -21,9 +21,18 @@ function App() {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
+    const blogsToShow = (blogs) => {
+    const sortedBlogList = blogs.sort((a, b) => {
+      if(a.likes > b.likes) return -1
+      if(a.likes < b.likes) return 1
+      else return 0
+    })
+    setBlogs(sortedBlogList) 
+  }
+
   useEffect(() => {
     blogService.getAll().then(res => {
-      setBlogs(res)
+      blogsToShow(res)
     })
   }, [])
 
@@ -77,8 +86,7 @@ function App() {
   const addBlog = async (blogObject) => {
     try {
       const savedBlog = await blogService.create(blogObject)
-      console.log(savedBlog);
-      setBlogs(blogs.concat(savedBlog))
+      blogsToShow(blogs.concat(savedBlog))
       blogFormRef.current.toggleVisibility()
 
       setMessage({
@@ -110,7 +118,7 @@ function App() {
         const blogObject = {...blog, likes: blog.likes + 1}
         const updatedBlog = await blogService.update(blogObject)
         const blogList = blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b)
-        setBlogs(blogList)
+        blogsToShow(blogList)
 
         setMessage({
         message: `You liked '${blogObject.title}' by ${blogObject.author}`,

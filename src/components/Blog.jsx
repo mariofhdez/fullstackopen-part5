@@ -1,8 +1,19 @@
 import { useState } from "react"
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike, handleRemove, user }) => {
     const [visible, setVisible] = useState(false)
-
+    const showWhenIsSameUser = () => { 
+        if(user !== undefined && blog.user){
+            if(user.name === blog.user.name){ 
+                    return {display: ''}
+                } else {
+                    console.log(blog.title);
+                    return { display: 'none'}
+                }
+        } else {
+                    return { display: 'none'}
+                }
+        }
     const showWhenVisible = { display: visible ? '' : 'none' }
     const toggleVisibility = () => {
         setVisible(!visible)
@@ -25,6 +36,7 @@ const Blog = ({ blog, handleLike }) => {
                 <p>{blog.url}</p>
                 <p>Likes: {blog.likes} <button onClick={(e) =>handleLike(blog)}>like</button></p>
                 <p>{blog.user ? blog.user.name : ''}</p>
+                <button style={showWhenIsSameUser()} onClick={(e) => handleRemove(blog)}>Remove</button>
             </div>
         </div>
     )

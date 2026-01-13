@@ -24,6 +24,19 @@ const create = async (newBlog) => {
   }
 };
 
+const remove = async (blogId) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.delete(`${baseUrl}/${blogId}`, config);
+  if (response.status === 204) {
+    return response.data;
+  } else {
+    console.log(response.data);
+    return null;
+  }
+};
+
 const update = async (blog) => {
   const response = await axios.put(`${baseUrl}/${blog.id}`, blog)
     if (response.status === 200) {
@@ -37,6 +50,7 @@ const update = async (blog) => {
 export default {
   getAll,
   create,
+  remove,
   update,
   setToken,
 };

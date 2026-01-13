@@ -21,13 +21,13 @@ function App() {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-    const blogsToShow = (blogs) => {
+  const blogsToShow = (blogs) => {
     const sortedBlogList = blogs.sort((a, b) => {
-      if(a.likes > b.likes) return -1
-      if(a.likes < b.likes) return 1
+      if (a.likes > b.likes) return -1
+      if (a.likes < b.likes) return 1
       else return 0
     })
-    setBlogs(sortedBlogList) 
+    setBlogs(sortedBlogList)
   }
 
   useEffect(() => {
@@ -115,12 +115,12 @@ function App() {
 
   const likeBlog = async (blog) => {
     try {
-        const blogObject = {...blog, likes: blog.likes + 1}
-        const updatedBlog = await blogService.update(blogObject)
-        const blogList = blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b)
-        blogsToShow(blogList)
+      const blogObject = { ...blog, likes: blog.likes + 1 }
+      const updatedBlog = await blogService.update(blogObject)
+      const blogList = blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b)
+      blogsToShow(blogList)
 
-        setMessage({
+      setMessage({
         message: `You liked '${blogObject.title}' by ${blogObject.author}`,
         type: 'success'
       })
@@ -133,6 +133,41 @@ function App() {
     } catch (error) {
       setMessage({
         message: `Like to the blog ${blog.title} is not registered`,
+        type: 'error'
+      })
+      setTimeout(() => {
+        setMessage({
+          message: null,
+          type: null
+        })
+      }, 5000)
+    }
+  }
+
+  const deleteBlog = async (blog) => {
+    try {
+      if (!confirm(`Remove blog '${blog.title}' by ${blog.author}?`)) {
+        throw new Error()
+      } else {
+
+        await blogService.remove(blog.id)
+        const blogList = blogs.filter(b => b.id !== blog.id)
+        blogsToShow(blogList)
+
+        setMessage({
+          message: `The deletion was completed successfully`,
+          type: 'success'
+        })
+        setTimeout(() => {
+          setMessage({
+            message: null,
+            type: null
+          })
+        }, 5000)
+      }
+    } catch (error) {
+      setMessage({
+        message: `The blog delete process is not completed`,
         type: 'error'
       })
       setTimeout(() => {
@@ -172,13 +207,13 @@ function App() {
   )
 
   const blogForm = () => {
-    return(
+    return (
       <Togglable buttonLabel="Create new note" ref={blogFormRef}>
         <BlogForm
           createBlog={addBlog}
         />
       </Togglable>
-  )
+    )
   }
 
   return (
@@ -194,7 +229,7 @@ function App() {
           </div>
           {blogForm()}
           <h2>Blog list</h2>
-          {blogs.map(b => <Blog key={b.id} blog={b} handleLike={likeBlog} />)}
+          {blogs.map(b => <Blog key={b.id} blog={b} handleLike={likeBlog} handleRemove={deleteBlog} user={user} />)}
         </div>
       }
     </>

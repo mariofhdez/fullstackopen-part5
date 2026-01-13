@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 import blogService from './services/blog'
 import loginService from './services/login'
@@ -9,7 +11,7 @@ import loginService from './services/login'
 import './index.css'
 
 function App() {
-  const [visible, setVisible] = useState(false)
+  const blogFormRef = useRef()
   const [message, setMessage] = useState({
     message: null,
     type: null
@@ -18,10 +20,6 @@ function App() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(res => {
@@ -76,28 +74,16 @@ function App() {
     }
   }
 
-  const addBlog = async (e) => {
-    e.preventDefault()
-
-    const newBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
-
+  const addBlog = async (blogObject) => {
     try {
-      const savedBlog = await blogService.create(newBlog)
+      const savedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(savedBlog))
-
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      blogFormRef.current.toggleVisibility()
 
       setMessage({
-        message: `a new blog ${newBlog.title} by ${newBlog.author} was added`,
+        message: `a new blog ${blogObject.title} by ${blogObject.author} was added`,
         type: 'success'
       })
-      setVisible(false)
       setTimeout(() => {
         setMessage({
           message: null,
@@ -106,7 +92,7 @@ function App() {
       }, 5000)
     } catch (error) {
       setMessage({
-        message: `The blog ${newBlog.title} by ${newBlog.author} was not added`,
+        message: `The blog ${blogObject.title} by ${blogObject.author} was not added`,
         type: 'error'
       })
       setTimeout(() => {
@@ -117,7 +103,6 @@ function App() {
       }, 5000)
     }
   }
-
 
   const loginForm = () => (
     <>
@@ -147,53 +132,14 @@ function App() {
   )
 
   const blogForm = () => {
-    const hideWhenVisible = { display: visible ? 'none' : '' }
-    const showWhenVisible = { display: visible ? '' : 'none' }
-
-    const toggleVisibility = () => {
-      setVisible(!visible)
-    }
-    return (
-    <>
-    <div style={hideWhenVisible}>
-      <button onClick={toggleVisibility}>Create new blog</button>
-    </div>
-    <div style={showWhenVisible}>
-      <h2>Create a new blog</h2>
-      <form onSubmit={addBlog}>
-        <div className='textField'>
-          <p>Title:</p>
-          <input
-            type="text"
-            value={title}
-            name='Title'
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div className='textField'>
-          <p>Author:</p>
-          <input
-            type="text"
-            value={author}
-            name='Author'
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div className='textField'>
-          <p>URL:</p>
-          <input
-            type="text"
-            value={url}
-            name='Url'
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button type="submit">Create</button>
-      </form>
-      <button onClick={toggleVisibility}>cancel</button>
-    </div>
-    </>
-  )}
+    return(
+      <Togglable buttonLabel="Create new note" ref={blogFormRef}>
+        <BlogForm
+          createBlog={addBlog}
+        />
+      </Togglable>
+  )
+  }
 
   return (
     <>

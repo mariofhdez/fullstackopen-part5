@@ -1,45 +1,58 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const Blog = ({ blog, handleLike, handleRemove, user }) => {
-    const [visible, setVisible] = useState(false)
-    const showWhenIsSameUser = () => { 
-        if(user !== undefined && blog.user){
-            if(user.name === blog.user.name){ 
-                    return {display: ''}
-                } else {
-                    console.log(blog.title);
-                    return { display: 'none'}
-                }
-        } else {
-                    return { display: 'none'}
-                }
-        }
-    const showWhenVisible = { display: visible ? '' : 'none' }
-    const toggleVisibility = () => {
-        setVisible(!visible)
+  const [visible, setVisible] = useState(false)
+  const showWhenIsSameUser = () => {
+    if (user !== undefined && blog.user) {
+      if (user.name === blog.user.name) {
+        return { display: '' }
+      } else {
+        console.log(blog.title)
+        return { display: 'none' }
+      }
+    } else {
+      return { display: 'none' }
     }
+  }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+  const toggleVisibility = () => {
+    setVisible(!visible)
+  }
 
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: 'solid',
-        borderWidth: 1,
-        marginBottom: 5
-    }
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: 'solid',
+    borderWidth: 1,
+    marginBottom: 5,
+  }
 
-    return (
-        <div style={blogStyle}>
-            <div>
-                <p><span>{blog.title}</span> - {blog.author} <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button></p>
-            </div>
-            <div style={showWhenVisible}>
-                <p>{blog.url}</p>
-                <p>Likes: {blog.likes} <button onClick={(e) =>handleLike(blog)}>like</button></p>
-                <p>{blog.user ? blog.user.name : ''}</p>
-                <button style={showWhenIsSameUser()} onClick={(e) => handleRemove(blog)}>Remove</button>
-            </div>
-        </div>
-    )
+  return (
+    <div style={blogStyle}>
+      <div>
+        <p>
+          <span>{blog.title}</span> - {blog.author}{' '}
+          <button onClick={toggleVisibility}>
+            {visible ? 'hide' : 'view'}
+          </button>
+        </p>
+      </div>
+      <div style={showWhenVisible}>
+        <p>{blog.url}</p>
+        <p>
+          Likes: {blog.likes}{' '}
+          <button onClick={() => handleLike(blog)}>like</button>
+        </p>
+        <p>{blog.user ? blog.user.name : ''}</p>
+        <button
+          style={showWhenIsSameUser()}
+          onClick={() => handleRemove(blog)}
+        >
+          Remove
+        </button>
+      </div>
+    </div>
+  )
 }
 
 export default Blog

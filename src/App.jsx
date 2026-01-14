@@ -14,7 +14,7 @@ function App() {
   const blogFormRef = useRef()
   const [message, setMessage] = useState({
     message: null,
-    type: null
+    type: null,
   })
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -31,7 +31,7 @@ function App() {
   }
 
   useEffect(() => {
-    blogService.getAll().then(res => {
+    blogService.getAll().then((res) => {
       blogsToShow(res)
     })
   }, [])
@@ -52,19 +52,20 @@ function App() {
 
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      console.log(user);
+      console.log(user)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (error) {
+      console.log(error)
       setMessage({
         message: 'Wrong username or password',
-        type: 'error'
+        type: 'error',
       })
       setTimeout(() => {
         setMessage({
           message: null,
-          type: null
+          type: null,
         })
       }, 5000)
     }
@@ -79,7 +80,7 @@ function App() {
       setUsername('')
       setPassword('')
     } catch (error) {
-      console.error('Error', error.message);
+      console.error('Error', error.message)
     }
   }
 
@@ -91,23 +92,24 @@ function App() {
 
       setMessage({
         message: `a new blog ${blogObject.title} by ${blogObject.author} was added`,
-        type: 'success'
+        type: 'success',
       })
       setTimeout(() => {
         setMessage({
           message: null,
-          type: null
+          type: null,
         })
       }, 5000)
     } catch (error) {
+      console.log(error)
       setMessage({
         message: `The blog ${blogObject.title} by ${blogObject.author} was not added`,
-        type: 'error'
+        type: 'error',
       })
       setTimeout(() => {
         setMessage({
           message: null,
-          type: null
+          type: null,
         })
       }, 5000)
     }
@@ -117,28 +119,31 @@ function App() {
     try {
       const blogObject = { ...blog, likes: blog.likes + 1 }
       const updatedBlog = await blogService.update(blogObject)
-      const blogList = blogs.map(b => b.id === updatedBlog.id ? updatedBlog : b)
+      const blogList = blogs.map((b) =>
+        b.id === updatedBlog.id ? updatedBlog : b
+      )
       blogsToShow(blogList)
 
       setMessage({
         message: `You liked '${blogObject.title}' by ${blogObject.author}`,
-        type: 'success'
+        type: 'success',
       })
       setTimeout(() => {
         setMessage({
           message: null,
-          type: null
+          type: null,
         })
       }, 5000)
     } catch (error) {
+      console.log(error)
       setMessage({
         message: `Like to the blog ${blog.title} is not registered`,
-        type: 'error'
+        type: 'error',
       })
       setTimeout(() => {
         setMessage({
           message: null,
-          type: null
+          type: null,
         })
       }, 5000)
     }
@@ -149,31 +154,31 @@ function App() {
       if (!confirm(`Remove blog '${blog.title}' by ${blog.author}?`)) {
         throw new Error()
       } else {
-
         await blogService.remove(blog.id)
-        const blogList = blogs.filter(b => b.id !== blog.id)
+        const blogList = blogs.filter((b) => b.id !== blog.id)
         blogsToShow(blogList)
 
         setMessage({
-          message: `The deletion was completed successfully`,
-          type: 'success'
+          message: 'The deletion was completed successfully',
+          type: 'success',
         })
         setTimeout(() => {
           setMessage({
             message: null,
-            type: null
+            type: null,
           })
         }, 5000)
       }
     } catch (error) {
+      console.log(error)
       setMessage({
-        message: `The blog delete process is not completed`,
-        type: 'error'
+        message: 'The blog delete process is not completed',
+        type: 'error',
       })
       setTimeout(() => {
         setMessage({
           message: null,
-          type: null
+          type: null,
         })
       }, 5000)
     }
@@ -183,21 +188,21 @@ function App() {
     <>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <div className='textField'>
+        <div className="textField">
           <p>Username</p>
           <input
             type="text"
             value={username}
-            name='Username'
+            name="Username"
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
-        <div className='textField'>
+        <div className="textField">
           <p>Password</p>
           <input
             type="password"
             value={password}
-            name='Password'
+            name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
@@ -209,9 +214,7 @@ function App() {
   const blogForm = () => {
     return (
       <Togglable buttonLabel="Create new note" ref={blogFormRef}>
-        <BlogForm
-          createBlog={addBlog}
-        />
+        <BlogForm createBlog={addBlog} />
       </Togglable>
     )
   }
@@ -220,8 +223,9 @@ function App() {
     <>
       <h1>Blog App</h1>
       <Notification message={message.message} type={message.type} />
-      {user === null ?
-        loginForm() :
+      {user === null ? (
+        loginForm()
+      ) : (
         <div>
           <div>
             <p>{user.name}</p>
@@ -229,9 +233,17 @@ function App() {
           </div>
           {blogForm()}
           <h2>Blog list</h2>
-          {blogs.map(b => <Blog key={b.id} blog={b} handleLike={likeBlog} handleRemove={deleteBlog} user={user} />)}
+          {blogs.map((b) => (
+            <Blog
+              key={b.id}
+              blog={b}
+              handleLike={likeBlog}
+              handleRemove={deleteBlog}
+              user={user}
+            />
+          ))}
         </div>
-      }
+      )}
     </>
   )
 }

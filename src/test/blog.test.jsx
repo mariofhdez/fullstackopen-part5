@@ -10,9 +10,10 @@ describe('Component <Blog />', () => {
     url: 'http://localhost:3001/',
     likes: 0,
   }
+  const likeBlog = vi.fn()
 
   beforeEach(() => {
-    container = render(<Blog blog={blog} />).container
+    container = render(<Blog blog={blog} handleLike={likeBlog} />).container
   })
 
   test('renders content', async () => {
@@ -36,5 +37,15 @@ describe('Component <Blog />', () => {
 
     expect(div).toHaveTextContent('http://localhost:3001/')
     expect(div).toHaveTextContent(0)
+  })
+
+  test('updates blog state and calls handleLike', async () => {
+    const user = userEvent.setup()
+
+    const viewDetails = screen.getByText('like')
+    await user.click(viewDetails)
+    await user.click(viewDetails)
+
+    expect(likeBlog.mock.calls).toHaveLength(2)
   })
 })

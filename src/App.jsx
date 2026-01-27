@@ -117,15 +117,14 @@ function App() {
 
   const likeBlog = async (blog) => {
     try {
-      const blogObject = { ...blog, likes: blog.likes + 1 }
-      const updatedBlog = await blogService.update(blogObject)
+      const updatedBlog = await blogService.update(blog)
       const blogList = blogs.map((b) =>
         b.id === updatedBlog.id ? updatedBlog : b
       )
       blogsToShow(blogList)
 
       setMessage({
-        message: `You liked '${blogObject.title}' by ${blogObject.author}`,
+        message: `You liked '${blog.title}' by ${blog.author}`,
         type: 'success',
       })
       setTimeout(() => {

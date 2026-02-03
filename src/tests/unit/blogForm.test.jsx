@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import BlogForm from '../components/BlogForm'
+import BlogForm from '../../components/BlogForm'
 import userEvent from '@testing-library/user-event'
 
 test('<BlogForm /> creates a blog and calls onSubmit', async () => {

@@ -52,10 +52,32 @@ test.describe('Blog app', () => {
         'http://localhost'
       )
 
-      const blogListDiv = page.locator('.blog')
-      await expect(blogListDiv.getByText('a blog from playwright')).toBeVisible()
+      const blogListDiv = await page.locator('.blog')
+      await expect(
+        blogListDiv.getByText('a blog from playwright')
+      ).toBeVisible()
       await expect(blogListDiv.getByText('playwright')).toBeVisible()
       await expect(blogListDiv.getByText('http://localhost')).not.toBeVisible()
+    })
+
+    test.describe('and a blog exists', () => {
+      test.beforeEach(async ({ page }) => {
+        await createBlog(
+          page,
+          'a permanent blog',
+          'playwright',
+          'http://localhost'
+        )
+      })
+
+      test('it can be updated', async ({ page }) => {
+        const blog = await page.locator('.blog')
+        await blog.getByRole('button', { name: 'view' }).click()
+        await expect(blog.getByTestId('likes')).toContainText('0')
+
+        await blog.getByRole('button', { name: 'like' }).click()
+        await expect(blog.getByTestId('likes')).toContainText('1')
+      })
     })
   })
 })

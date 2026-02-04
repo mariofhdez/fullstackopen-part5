@@ -190,6 +190,7 @@ function App() {
         <div className="textField">
           <p>Username</p>
           <input
+            data-testid="username"
             type="text"
             value={username}
             name="Username"
@@ -199,13 +200,14 @@ function App() {
         <div className="textField">
           <p>Password</p>
           <input
+            data-testid="password"
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Log in</button>
       </form>
     </>
   )

@@ -214,7 +214,7 @@ function App() {
 
   const blogForm = () => {
     return (
-      <Togglable buttonLabel="Create new note" ref={blogFormRef}>
+      <Togglable buttonLabel="Create new blog" ref={blogFormRef}>
         <BlogForm createBlog={addBlog} />
       </Togglable>
     )

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { loginWith } from './helper'
+import { createBlog, loginWith } from './helper'
 
 test.describe('Blog app', () => {
   test.beforeEach(async ({ page, request }) => {
@@ -37,5 +37,25 @@ test.describe('Blog app', () => {
     await expect(errorMessageDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
 
     await expect(page.getByText('John Doe')).not.toBeVisible()
+  })
+
+  test.describe('when logged in', () => {
+    test.beforeEach(async ({ page }) => {
+      await loginWith(page, 'jdoe', 'password')
+    })
+
+    test('a new blog can be created', async ({ page }) => {
+      await createBlog(
+        page,
+        'a blog from playwright',
+        'playwright',
+        'http://localhost'
+      )
+
+      const blogListDiv = page.locator('.blog')
+      await expect(blogListDiv.getByText('a blog from playwright')).toBeVisible()
+      await expect(blogListDiv.getByText('playwright')).toBeVisible()
+      await expect(blogListDiv.getByText('http://localhost')).not.toBeVisible()
+    })
   })
 })

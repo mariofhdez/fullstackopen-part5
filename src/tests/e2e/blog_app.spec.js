@@ -62,6 +62,8 @@ test.describe('Blog app', () => {
 
     test.describe('and a blog exists', () => {
       test.beforeEach(async ({ page }) => {
+        await loginWith(page, 'jdoe', 'password')
+
         await createBlog(
           page,
           'a permanent blog',
@@ -75,8 +77,21 @@ test.describe('Blog app', () => {
         await blog.getByRole('button', { name: 'view' }).click()
         await expect(blog.getByTestId('likes')).toContainText('0')
 
+        await page.pause()
+        await expect(page.locator('.blogDetails')).toBeVisible()
+
         await blog.getByRole('button', { name: 'like' }).click()
         await expect(blog.getByTestId('likes')).toContainText('1')
+      })
+
+      test('it can be deleted', async ({ page }) => {
+        const blog = await page.locator('.blog')
+        await blog.getByRole('button', { name: 'view' }).click()
+
+        await expect(blog.getByRole('button', { name: 'remove' })).toBeVisible()
+        page.once('dialog', async (dialog) => await dialog.accept())
+        await blog.getByRole('button', { name: 'remove' }).click()
+        await expect(page.locator('.blog')).not.toBeVisible()
       })
     })
   })

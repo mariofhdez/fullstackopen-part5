@@ -28,8 +28,8 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
   }
 
   return (
-    <div style={blogStyle} className='blog'>
-      <div className='blogHeader'>
+    <div style={blogStyle} className="blog">
+      <div className="blogHeader">
         <p>
           <span>{blog.title}</span> - {blog.author}{' '}
           <button onClick={toggleVisibility}>
@@ -37,18 +37,19 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
           </button>
         </p>
       </div>
-      <div style={showWhenVisible} className='blogDetails'>
+      <div style={showWhenVisible} className="blogDetails">
         <p>{blog.url}</p>
-        <p data-testid='likes'>
+        <p data-testid="likes">
           Likes: {blog.likes}{' '}
-          <button onClick={() => handleLike({ ...blog, likes: blog.likes + 1 })}>like</button>
+          <button
+            onClick={() => handleLike({ ...blog, likes: blog.likes + 1 })}
+          >
+            like
+          </button>
         </p>
         <p>{blog.user ? blog.user.name : ''}</p>
-        <button
-          style={showWhenIsSameUser()}
-          onClick={() => handleRemove(blog)}
-        >
-          Remove
+        <button style={showWhenIsSameUser()} onClick={() => handleRemove(blog)}>
+          remove
         </button>
       </div>
     </div>

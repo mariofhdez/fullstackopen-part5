@@ -19,7 +19,10 @@ function App() {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    return loggedUserJSON ? JSON.parse(loggedUserJSON) : null
+  })
 
   const blogsToShow = (blogs) => {
     const sortedBlogList = blogs.sort((a, b) => {
@@ -86,8 +89,10 @@ function App() {
 
   const addBlog = async (blogObject) => {
     try {
-      const savedBlog = await blogService.create(blogObject)
-      blogsToShow(blogs.concat(savedBlog))
+      await blogService.create(blogObject)
+      blogService.getAll().then((res) => {
+        blogsToShow(res)
+      })
       blogFormRef.current.toggleVisibility()
 
       setMessage({

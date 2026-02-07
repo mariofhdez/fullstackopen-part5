@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { createBlog, loginWith } from './helper'
+import { createBlog, likeBlog, loginWith } from './helper'
 
 test.describe('Blog app', () => {
   test.beforeEach(async ({ page, request }) => {
@@ -69,8 +69,6 @@ test.describe('Blog app', () => {
 
     test.describe('and a blog exists', () => {
       test.beforeEach(async ({ page }) => {
-        await loginWith(page, 'jdoe', 'password')
-
         await createBlog(
           page,
           'a permanent blog',
@@ -101,7 +99,9 @@ test.describe('Blog app', () => {
         await expect(page.locator('.blog')).not.toBeVisible()
       })
 
-      test.only('only the blog creator can see the remove button', async ({ page }) => {
+      test('only the blog creator can see the remove button', async ({
+        page,
+      }) => {
         const blog = await page.locator('.blog')
         await blog.getByRole('button', { name: 'view' }).click()
 
@@ -111,7 +111,34 @@ test.describe('Blog app', () => {
 
         await loginWith(page, 'jsmith', 'password')
         await blog.getByRole('button', { name: 'view' }).click()
-        await expect(blog.getByRole('button', { name: 'remove' })).not.toBeVisible()
+        await expect(
+          blog.getByRole('button', { name: 'remove' })
+        ).not.toBeVisible()
+      })
+    })
+
+    test.describe('and several blogs exists', () => {
+      test.beforeEach(async ({ page }) => {
+        await createBlog(page,'blog 1','playwright','http://localhost')
+        await createBlog(page,'blog 2','playwright','http://localhost')
+        await createBlog(page,'blog 3','playwright','http://localhost')
+
+        await likeBlog(page, 'blog 2')
+        await likeBlog(page, 'blog 2')
+        await likeBlog(page, 'blog 2')
+
+        await likeBlog(page, 'blog 3')
+        await likeBlog(page, 'blog 3')
+
+        await likeBlog(page, 'blog 1')
+      })
+
+      test('the blogs are ordered by the highest number of likes', async ({ page }) => {
+        const blogs = page.locator('.blog')
+
+        await expect(blogs.nth(0).getByTestId('blog 2')).toContainText('blog 2')
+        await expect(blogs.nth(1).getByTestId('blog 3')).toContainText('blog 3')
+        await expect(blogs.nth(2).getByTestId('blog 1')).toContainText('blog 1')
       })
     })
   })
